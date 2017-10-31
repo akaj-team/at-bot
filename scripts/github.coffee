@@ -12,6 +12,7 @@ atGithub = require 'at-git-tools'
 
 fs = require 'fs'
 configs = JSON.parse(fs.readFileSync('./at-bot-configs.json', 'utf8'))
+attachmentCount = 0
 
 module.exports = (robot) ->
   # Check users infomation
@@ -27,8 +28,8 @@ module.exports = (robot) ->
         res.send "Tổng số nhân viên: #{result.length}"
         msg = createErrorMessage(result)
         console.log "attachments size> #{msg.attachments.length}"
+        res.send "Không đúng định dạng: #{attachmentCount}"
         res.send msg
-
 
   robot.hear /test/i, (res) ->
     account = res.match[1]
@@ -65,9 +66,10 @@ createErrorMessage = (users) ->
           short: true
           })
     # console.log issueCount
-    if issueCount > 0 && attachmentCount < 100
+    if issueCount > 0
       attachmentCount +=1
-      result.attachments.push(attachment)
+      if attachmentCount < 100
+        result.attachments.push(attachment)
   result
 
 #Get random color
