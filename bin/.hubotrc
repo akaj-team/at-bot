@@ -1,0 +1,9 @@
+#---------------- HUBOT CONFIG -----------------------------------
+
+export HUBOT_ADAPTER="slack"
+export HUBOT_PATH="/home/asiantech/at-bot"
+export HUBOT_SLACK_TOKEN=""
+#---------------- END HUBOT CONFIG --------------------------------
+
+npm install
+export PATH="node_modules/.bin:node_modules/hubot/node_modules/.bin:$PATH"
