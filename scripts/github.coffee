@@ -17,7 +17,7 @@ module.exports = (robot) ->
   # Check users infomation
   robot.respond /\/github-check (.*)/i, (res) ->
     if configs["allowed-room-ids"].indexOf(res.envelope.room) == -1
-      res.reply "Room này không có quyền truy cập."
+      res.reply "Room `#{res.envelope.room}` không có quyền truy cập."
       return
     account = res.match[1]
     # console.log res
