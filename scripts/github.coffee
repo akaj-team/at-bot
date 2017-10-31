@@ -25,7 +25,10 @@ module.exports = (robot) ->
       res.reply "OK, wait a minute."
       atGithub.checkUsers configs.organization, configs["github-access-token"], (result) ->
         res.send "Tổng số nhân viên: #{result.length}"
-        res.send createErrorMessage(result)
+        msg = createErrorMessage(result)
+        console.log "attachments size> #{msg.attachments.length}"
+        res.send msg
+
 
   robot.hear /test/i, (res) ->
     account = res.match[1]
@@ -39,6 +42,7 @@ createErrorMessage = (users) ->
     pretext: "New ticket from Andrea Lee",
     attachments: []
     }
+  attachmentCount = 0
   for user in users
     issueCount = 0
     attachment = {
@@ -61,7 +65,8 @@ createErrorMessage = (users) ->
           short: true
           })
     # console.log issueCount
-    if issueCount > 0
+    if issueCount > 0 && attachmentCount < 100
+      attachmentCount +=1
       result.attachments.push(attachment)
   result
 
