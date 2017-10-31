@@ -7,32 +7,43 @@
 #   Uncomment the ones you want to try and experiment with.
 #
 #   These are from the scripting documentation: https://github.com/github/hubot/blob/master/docs/scripting.md
-ORGANIZATION = "akaj-team"
-GITHUB_ACCESS_TOKEN = "xxx"
 
 atGithub = require 'at-git-tools'
+
+fs = require 'fs'
+configs = JSON.parse(fs.readFileSync('./at-bot-configs.json', 'utf8'))
 
 module.exports = (robot) ->
   # Check users infomation
   robot.respond /\/github-check (.*)/i, (res) ->
+    if configs["allowed-room-ids"].indexOf(res.envelope.room) == -1
+      res.reply "Room này không có quyền truy cập."
+      return
     account = res.match[1]
+    # console.log res
     if account is "all"
       res.reply "OK, wait a minute."
-      atGithub.checkUsers ORGANIZATION, GITHUB_ACCESS_TOKEN, (result) ->
-        test = JSON.stringify(result)
+      atGithub.checkUsers configs.organization, configs["github-access-token"], (result) ->
+        res.send "Tổng số nhân viên: #{result.length}"
         res.send createErrorMessage(result)
+
+  robot.hear /test/i, (res) ->
+    account = res.match[1]
+    console.log res.envelope.room
+    res.reply "OK."
 
 
 # Create slack attachments reports
 createErrorMessage = (users) ->
   result = {
+    pretext: "New ticket from Andrea Lee",
     attachments: []
     }
   for user in users
     issueCount = 0
     attachment = {
       thumb_url: user.avatarUrl,
-      fallback: "ReferenceError - UI is not defined: https://honeybadger.io/path/to/event/",
+      fallback: "",
       text: "<#{user.url}|#{user.login}> - Chưa hợp lệ.",
       fields: [],
       color: getRandomColor()
